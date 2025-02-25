@@ -1,9 +1,7 @@
 package src;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.LinkedList;
-import java.util.Scanner;
-
 public class Book {
     private int id;
     private String title;
@@ -12,20 +10,7 @@ public class Book {
     private boolean availability;
 
     public Book(String title, String author, LinkedList<String> genre, boolean availability) {
-        try {
-            String path = "books.csv";
-            Scanner myReader = new Scanner(new File(path));
-            String data = "0";
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-            }
-            this.id = Integer.parseInt(data.split(",")[0].trim()) + 1;
-                myReader.close();
-            } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    
+        this.id = incrementID();
         this.title = title;
         this.author = author;
         this.genre = genre;
@@ -33,19 +18,7 @@ public class Book {
     }
 
     public Book(String title, String author) {
-        try {
-            String path = "books.csv";
-            Scanner myReader = new Scanner(new File(path));
-            String data = "0";
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-            }
-            this.id = Integer.parseInt(data.split(",")[0].trim()) + 1;
-            myReader.close();
-            } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        this.id = incrementID();
         this.title = title;
         this.author = author;
         this.genre = new LinkedList<String>();
@@ -89,6 +62,22 @@ public class Book {
         return this.availability;
     }
 
+    public int incrementID(){
+        String data;
+        int newId;
+        try(BufferedReader myReader = new BufferedReader(new FileReader("books.csv"))){
+            while ((data = myReader.readLine())!=null) {
+            }
+            if(data == null) data = "0";
+            newId = Integer.parseInt(data.split(",")[0].trim()) + 1;
+        }
+        catch (Exception e) {
+        throw new RuntimeException ("file not found");
+        }
+
+        return newId;
+    }
+
     @Override
     public String toString() {
         String genres = '(' + String.join(",", genre) + ')';
@@ -96,9 +85,9 @@ public class Book {
     }
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; // Check for reference equality
-        if (o == null || getClass() != o.getClass()) return false; // Check for null and type
-        Book book = (Book) o; // Cast to Book
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
         return id == book.id;
     }
 
