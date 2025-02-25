@@ -1,7 +1,9 @@
 package src;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.LinkedList;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+
 public class Book {
     private int id;
     private String title;
@@ -10,7 +12,7 @@ public class Book {
     private boolean availability;
 
     public Book(String title, String author, LinkedList<String> genre, boolean availability) {
-        this.id = incrementID();
+        this.id = incrementId();
         this.title = title;
         this.author = author;
         this.genre = genre;
@@ -18,7 +20,7 @@ public class Book {
     }
 
     public Book(String title, String author) {
-        this.id = incrementID();
+        this.id = incrementId();
         this.title = title;
         this.author = author;
         this.genre = new LinkedList<String>();
@@ -62,22 +64,6 @@ public class Book {
         return this.availability;
     }
 
-    public int incrementID(){
-        String data;
-        int newId;
-        try(BufferedReader myReader = new BufferedReader(new FileReader("books.csv"))){
-            while ((data = myReader.readLine())!=null) {
-            }
-            if(data == null) data = "0";
-            newId = Integer.parseInt(data.split(",")[0].trim()) + 1;
-        }
-        catch (Exception e) {
-        throw new RuntimeException ("file not found");
-        }
-
-        return newId;
-    }
-
     @Override
     public String toString() {
         String genres = '(' + String.join(",", genre) + ')';
@@ -94,5 +80,22 @@ public class Book {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    private int incrementId () {
+        String PATH = "books.csv"; 
+        String data = "0";
+        int newId = 0;
+        try (Scanner sc = new Scanner(new File(PATH))) {
+            while(sc.hasNextLine()) {
+                data = sc.nextLine();
+            }
+        }
+        catch(IOException e) {
+            throw new RuntimeException();
+        }
+        newId = Integer.parseInt(data.split(",")[0].trim());
+
+        return newId + 1;
     }
 }

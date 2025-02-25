@@ -4,3 +4,5 @@ out/
 bin/
 *.class
 *.csv
+*.iml
+*.docx
